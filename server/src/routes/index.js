@@ -1,11 +1,15 @@
 import { Router } from 'express';
+import { User, Post, Comment } from '../models/index.js';
 
 const router = Router();
 
-router.get('/health', (req, res) => {
-  res.json({ success: true, data: { status: 'ok', time: new Date().toISOString() } });
+router.get('/health', async (req, res) => {
+  const [users, posts, comments] = await Promise.all([
+    User.countDocuments(),
+    Post.countDocuments(),
+    Comment.countDocuments(),
+  ]);
+  res.json({ success: true, data: { status: 'ok', users, posts, comments } });
 });
-
-// Later: router.use('/auth', authRoutes); router.use('/posts', postRoutes); ...
 
 export default router;
