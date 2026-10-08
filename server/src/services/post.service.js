@@ -2,6 +2,7 @@ import slugify from 'slugify';
 import { Post } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { assertOwnerOrAdmin } from '../utils/permissions.js';
+import { escapeRegex } from '../utils/escapeRegex.js';
 
 const AUTHOR_FIELDS = 'name avatar';
 
@@ -18,9 +19,6 @@ async function generateUniqueSlug(title) {
   return slug;
 }
 
-function escapeRegex(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 export async function createPost({ title, content }, authorId) {
   const slug = await generateUniqueSlug(title);
