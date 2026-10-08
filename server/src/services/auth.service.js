@@ -70,7 +70,10 @@ export async function refresh(oldToken) {
   return { user, ...tokens };
 }
 
+
 export async function logout(token) {
-  if (!token) return;
-  await RefreshToken.updateOne({ token }, { revoked: true });
+  if (!token) return null;
+  const stored = await RefreshToken.findOneAndUpdate({ token }, { revoked: true });
+  return stored?.user ?? null;
 }
+

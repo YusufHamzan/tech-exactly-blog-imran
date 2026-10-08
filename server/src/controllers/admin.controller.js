@@ -12,8 +12,14 @@ export const listUsers = asyncHandler(async (req, res) => {
   sendSuccess(res, { users }, 200, meta);
 });
 
+// export const updateUserRole = asyncHandler(async (req, res) => {
+//   const user = await adminService.updateUserRole(req.params.id, req.body.role, req.user);
+//   sendSuccess(res, { user });
+// });
+
 export const updateUserRole = asyncHandler(async (req, res) => {
   const user = await adminService.updateUserRole(req.params.id, req.body.role, req.user);
+  res.locals.activity = { meta: { targetEmail: user.email, newRole: user.role } };
   sendSuccess(res, { user });
 });
 
@@ -40,4 +46,9 @@ export const permanentlyDeletePost = asyncHandler(async (req, res) => {
 export const listAllComments = asyncHandler(async (req, res) => {
   const { comments, meta } = await adminService.listAllComments(req.validated.query);
   sendSuccess(res, { comments }, 200, meta);
+});
+
+export const listActivity = asyncHandler(async (req, res) => {
+  const { activities, meta } = await adminService.listActivity(req.validated.query);
+  sendSuccess(res, { activities }, 200, meta);
 });

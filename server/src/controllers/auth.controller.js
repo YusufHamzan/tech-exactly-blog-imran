@@ -13,10 +13,16 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, matches JWT_REFRESH_EXPIRES
 };
 
+// function sendAuthResponse(res, { user, accessToken, refreshToken }, statusCode = 200) {
+//   res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
+//   return sendSuccess(res, { user, accessToken }, statusCode);
+// }
+
 function sendAuthResponse(res, { user, accessToken, refreshToken }, statusCode = 200) {
-  res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
-  return sendSuccess(res, { user, accessToken }, statusCode);
-}
+    res.locals.activity = { user: user._id, entityId: user._id, meta: { email: user.email } };
+    res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
+    return sendSuccess(res, { user, accessToken }, statusCode);
+  }
 
 export const register = asyncHandler(async (req, res) => {
   const result = await authService.register(req.body);
@@ -33,11 +39,22 @@ export const refresh = asyncHandler(async (req, res) => {
   sendAuthResponse(res, result);
 });
 
+
+// export const logout = asyncHandler(async (req, res) => {
+//   await authService.logout(req.cookies[REFRESH_COOKIE]);
+//   res.clearCookie(REFRESH_COOKIE, { ...cookieOptions, maxAge: undefined });
+//   sendSuccess(res, { message: 'Logged out' });
+// });
+
+  
 export const logout = asyncHandler(async (req, res) => {
-  await authService.logout(req.cookies[REFRESH_COOKIE]);
-  res.clearCookie(REFRESH_COOKIE, { ...cookieOptions, maxAge: undefined });
-  sendSuccess(res, { message: 'Logged out' });
-});
+    const userId = await authService.logout(req.cookies[REFRESH_COOKIE]);
+    if (userId) res.locals.activity = { user: userId, entityId: userId };
+    res.clearCookie(REFRESH_COOKIE, { ...cookieOptions, maxAge: undefined });
+    sendSuccess(res, { message: 'Logged out' });
+  });
+
+  
 
 export const me = asyncHandler(async (req, res) => {
   sendSuccess(res, { user: req.user });

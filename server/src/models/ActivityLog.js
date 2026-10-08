@@ -1,16 +1,20 @@
 import mongoose from 'mongoose';
 
 export const ACTIVITY_ACTIONS = [
-  'REGISTER',
-  'LOGIN',
-  'LOGOUT',
-  'POST_CREATE',
-  'POST_UPDATE',
-  'POST_DELETE',
-  'COMMENT_CREATE',
-  'COMMENT_DELETE',
-  'USER_DELETE',
-];
+    'REGISTER',
+    'LOGIN',
+    'LOGOUT',
+    'POST_CREATE',
+    'POST_UPDATE',
+    'POST_DELETE',
+    'POST_RESTORE',
+    'POST_PERMANENT_DELETE',
+    'COMMENT_CREATE',
+    'COMMENT_UPDATE',
+    'COMMENT_DELETE',
+    'USER_ROLE_UPDATE',
+    'USER_DELETE',
+  ];
 
 const activityLogSchema = new mongoose.Schema(
   {

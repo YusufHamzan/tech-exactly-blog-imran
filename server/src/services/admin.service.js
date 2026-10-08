@@ -1,4 +1,4 @@
-import { User, Post, Comment, RefreshToken } from '../models/index.js';
+import { User, Post, Comment, RefreshToken, ActivityLog } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { escapeRegex } from '../utils/escapeRegex.js';
 import { ROLES } from '../constants/roles.js';
@@ -137,4 +137,25 @@ export async function listAllComments({ page, limit, post, author }) {
   ]);
 
   return { comments, meta: buildMeta(page, limit, total) };
+}
+
+
+//---------- Activity Logs ----------
+export async function listActivity({ page, limit, action, user }) {
+  const filter = {};
+  if (action) filter.action = action;
+  if (user) filter.user = user;
+
+  const skip = (page - 1) * limit;
+  const [activities, total] = await Promise.all([
+    ActivityLog.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('user', 'name email role')
+      .lean(),
+    ActivityLog.countDocuments(filter),
+  ]);
+
+  return { activities, meta: buildMeta(page, limit, total) };
 }

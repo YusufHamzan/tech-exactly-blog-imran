@@ -10,8 +10,14 @@ export const listComments = asyncHandler(async (req, res) => {
   sendSuccess(res, { comments }, 200, meta);
 });
 
+// export const createComment = asyncHandler(async (req, res) => {
+//   const comment = await commentService.createComment(req.params.postId, req.body, req.user);
+//   sendSuccess(res, { comment }, 201);
+// });
+
 export const createComment = asyncHandler(async (req, res) => {
   const comment = await commentService.createComment(req.params.postId, req.body, req.user);
+  res.locals.activity = { entityId: comment._id, meta: { postId: req.params.postId } };
   sendSuccess(res, { comment }, 201);
 });
 

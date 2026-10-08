@@ -1,3 +1,4 @@
+import { ACTIVITY_ACTIONS } from '../models/ActivityLog.js';
 import { z } from 'zod';
 import { objectIdSchema, paginationSchema } from './common.schema.js';
 import { ALL_ROLES } from '../constants/roles.js';
@@ -31,5 +32,13 @@ export const listAdminCommentsSchema = z.object({
   query: paginationSchema.extend({
     post: objectIdSchema.optional(),
     author: objectIdSchema.optional(),
+  }),
+});
+
+
+export const listActivitySchema = z.object({
+  query: paginationSchema.extend({
+    action: z.enum(ACTIVITY_ACTIONS).optional(),
+    user: objectIdSchema.optional(),
   }),
 });
