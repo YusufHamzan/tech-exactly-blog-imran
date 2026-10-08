@@ -77,3 +77,29 @@ export async function logout(token) {
   return stored?.user ?? null;
 }
 
+export async function findOrCreateOAuthUser({ provider, providerId, email, name, avatar }) {
+  if (!email) throw ApiError.badRequest(`Your ${provider} account has no email address`);
+
+  // 1. Returning OAuth user
+  let user = await User.findOne({ provider, providerId });
+  if (user) return user;
+
+  // 2. Existing account with the same email (registered locally): link it
+  user = await User.findOne({ email });
+  if (user) {
+    user.provider = provider;
+    user.providerId = providerId;
+    if (!user.avatar && avatar) user.avatar = avatar;
+    await user.save();
+    return user;
+  }
+
+  // 3. Brand-new user
+  return User.create({ name: name || email.split('@')[0], email, provider, providerId, avatar });
+}
+
+export async function oauthLogin(user) {
+  const tokens = await issueTokens(user);
+  return { user, ...tokens };
+}
+

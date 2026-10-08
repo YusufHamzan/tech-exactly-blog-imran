@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import { env } from './config/env.js';
 import apiRouter from './routes/index.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
+import passport from 'passport';
+import { configurePassport } from './config/passport.js';
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(cors({ origin: env.clientUrl, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+configurePassport();
+app.use(passport.initialize());
 if (env.nodeEnv === 'development') app.use(morgan('dev'));
 
 app.use('/api/v1', apiRouter);

@@ -34,6 +34,15 @@ export const login = asyncHandler(async (req, res) => {
   sendAuthResponse(res, result);
 });
 
+export const googleCallback = asyncHandler(async (req, res) => {
+  // Passport placed the User document on req.user
+  const { user, refreshToken } = await authService.oauthLogin(req.user);
+
+  res.locals.activity = { user: user._id, entityId: user._id, meta: { email: user.email, provider: 'google' } };
+  res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
+  res.redirect(`${env.clientUrl}/oauth/callback`);
+});
+
 export const refresh = asyncHandler(async (req, res) => {
   const result = await authService.refresh(req.cookies[REFRESH_COOKIE]);
   sendAuthResponse(res, result);

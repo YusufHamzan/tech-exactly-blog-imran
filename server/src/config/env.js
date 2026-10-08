@@ -8,6 +8,8 @@ for (const key of required) {
   }
 }
 
+const serverUrl = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
+
 export const env = {
   port: Number(process.env.PORT) || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -18,5 +20,14 @@ export const env = {
     refreshSecret: process.env.JWT_REFRESH_SECRET,
     accessExpires: process.env.JWT_ACCESS_EXPIRES || '15m',
     refreshExpires: process.env.JWT_REFRESH_EXPIRES || '7d',
+  },
+  serverUrl,
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL || `${serverUrl}/api/v1/auth/google/callback`,
+    get enabled() {
+      return Boolean(this.clientId && this.clientSecret);
+    },
   },
 };

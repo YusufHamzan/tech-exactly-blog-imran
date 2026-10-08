@@ -8,7 +8,7 @@ import { ActivityLog } from '../models/ActivityLog.js';
  */
 export const logActivity = (action, entityType) => (req, res, next) => {
   res.on('finish', () => {
-    if (res.statusCode < 200 || res.statusCode >= 300) return;
+    if (res.statusCode >= 400) return;
 
     const extra = res.locals.activity || {};
     const user = extra.user ?? req.user?._id;
