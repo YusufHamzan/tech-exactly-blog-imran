@@ -1,20 +1,12 @@
-const createApiError = (statusCode, message, details = undefined) => {
-    const error = new Error(message);
-    error.statusCode = statusCode;
-    error.details = details;
-    return error;
-  };
+export class ApiError extends Error {
+    constructor(statusCode, message, details = undefined) {
+      super(message);
+      this.statusCode = statusCode;
+      this.details = details;
+    }
   
-  export const ApiError = {
-    badRequest: (message, details) =>
-      createApiError(400, message, details),
-  
-    unauthorized: (message = 'Unauthorized') =>
-      createApiError(401, message),
-  
-    forbidden: (message = 'Forbidden') =>
-      createApiError(403, message),
-  
-    notFound: (message = 'Not found') =>
-      createApiError(404, message),
-  };
+    static badRequest(message, details) { return new ApiError(400, message, details); }
+    static unauthorized(message = 'Unauthorized') { return new ApiError(401, message); }
+    static forbidden(message = 'Forbidden') { return new ApiError(403, message); }
+    static notFound(message = 'Not found') { return new ApiError(404, message); }
+  }
