@@ -1,10 +1,22 @@
 import slugify from 'slugify';
-import { Post } from '../models/index.js';
+import { Post, Comment } from '../models/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { assertOwnerOrAdmin } from '../utils/permissions.js';
 import { escapeRegex } from '../utils/escapeRegex.js';
 
 const AUTHOR_FIELDS = 'name avatar';
+
+async function attachCommentCounts(posts) {
+  if (posts.length === 0) return posts;
+
+  const counts = await Comment.aggregate([
+    { $match: { post: { $in: posts.map((p) => p._id) } } },
+    { $group: { _id: '$post', count: { $sum: 1 } } },
+  ]);
+
+  const byPost = new Map(counts.map((c) => [String(c._id), c.count]));
+  return posts.map((p) => ({ ...p, commentCount: byPost.get(String(p._id)) ?? 0 }));
+}
 
 async function generateUniqueSlug(title) {
   const base = slugify(title, { lower: true, strict: true, trim: true }) || 'post';
@@ -44,15 +56,18 @@ export async function listPosts({ page, limit, author, search }) {
   ]);
 
   return {
-    posts,
+    posts: await attachCommentCounts(posts),
     meta: { page, limit, total, totalPages: Math.ceil(total / limit) || 1 },
   };
+
 }
 
 export async function getPostBySlug(slug) {
   const post = await Post.findOne({ slug }).populate('author', AUTHOR_FIELDS);
   if (!post) throw ApiError.notFound('Post not found');
-  return post;
+
+  const commentCount = await Comment.countDocuments({ post: post._id });
+  return { ...post.toJSON(), commentCount };
 }
 
 export async function updatePost(id, data, user) {
