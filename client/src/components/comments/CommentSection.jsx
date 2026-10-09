@@ -6,8 +6,9 @@ import { useAuth } from '../../hooks/useAuth.js';
 import { CommentItem } from './CommentItem.jsx';
 import { Pagination } from '../Pagination.jsx';
 import { Avatar } from '../Avatar.jsx';
+import { socket } from '../../sockets/socket.js';
 
-export function CommentSection({ postId }) {
+export function CommentSection({ postId, onCountChange  }) {
     const { user, isAuthenticated } = useAuth();
     const [comments, setComments] = useState([]);
     const [meta, setMeta] = useState(null);
@@ -30,6 +31,39 @@ export function CommentSection({ postId }) {
     }, [postId, page]);
 
     useEffect(() => { load(); }, [load]);
+
+    useEffect(() => {
+        socket.emit('post:join', postId);
+
+        function onCreated({ comment, postId: pid }) {
+            if (String(pid) !== String(postId)) return;
+            setComments((list) => (list.some((c) => c._id === comment._id) ? list : [...list, comment]));
+            setMeta((m) => (m ? { ...m, total: m.total + 1 } : m));
+        }
+
+        function onUpdated({ comment, postId: pid }) {
+            if (String(pid) !== String(postId)) return;
+            setComments((list) => list.map((c) => (c._id === comment._id ? { ...c, ...comment } : c)));
+        }
+
+        function onDeleted({ commentId, postId: pid }) {
+            if (String(pid) !== String(postId)) return;
+            setComments((list) => list.filter((c) => c._id !== commentId));
+            setMeta((m) => (m ? { ...m, total: Math.max(0, m.total - 1) } : m));
+        }
+
+        socket.on('comment:created', onCreated);
+        socket.on('comment:updated', onUpdated);
+        socket.on('comment:deleted', onDeleted);
+
+        return () => {
+            socket.emit('post:leave', postId);
+            socket.off('comment:created', onCreated);
+            socket.off('comment:updated', onUpdated);
+            socket.off('comment:deleted', onDeleted);
+        };
+    }, [postId]);
+
 
     async function handleCreate(e) {
         e.preventDefault();

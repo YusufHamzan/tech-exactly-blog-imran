@@ -702,3 +702,27 @@ code.meta { font-size: 0.75rem; background: #f3f4f6; padding: 0.1rem 0.35rem; bo
   .admin { grid-template-columns: 1fr; }
   .admin-sidebar { position: static; flex-direction: row; flex-wrap: wrap; }
 }
+
+.toast-stack {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: min(360px, calc(100vw - 2rem));
+  }
+  .toast {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    background: #111827;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  .toast strong { font-size: 0.9rem; }
+  .toast span { font-size: 0.85rem; color: #d1d5db; }
+  .toast:hover { color: #fff; }

@@ -78,7 +78,10 @@ export function PostDetailPage() {
                 {error && <p className="error">{error}</p>}
             </article>
 
-            <CommentSection postId={post._id} />
+            <CommentSection
+                postId={post._id}
+                onCountChange={(total) => setPost((p) => (p ? { ...p, commentCount: total } : p))}
+            />
         </div>
     );
 }
