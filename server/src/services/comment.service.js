@@ -18,9 +18,12 @@ async function findCommentOrFail(postId, id) {
 }
 
 export async function createComment(postId, { content }, user) {
-  await ensurePostExists(postId);
+  const post = await Post.findById(postId).select('title slug author');
+  if (!post) throw ApiError.notFound('Post not found');
+
   const comment = await Comment.create({ content, post: postId, author: user._id });
-  return comment.populate('author', AUTHOR_FIELDS);
+  await comment.populate('author', AUTHOR_FIELDS);
+  return { comment, post };
 }
 
 export async function listComments(postId, { page, limit }) {
