@@ -10,6 +10,9 @@ import { OAuthCallbackPage } from './pages/OAuthCallbackPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
+import { PostDetailPage } from './pages/PostDetailPage.jsx';
+import { NewPostPage } from './pages/NewPostPage.jsx';
+import { EditPostPage } from './pages/EditPostPage.jsx';
 
 export default function App() {
   return (
@@ -18,12 +21,15 @@ export default function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/posts/:slug" element={<PostDetailPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/posts/new" element={<NewPostPage />} />
+              <Route path="/posts/:slug/edit" element={<EditPostPage />} />
             </Route>
 
             <Route element={<AdminRoute />}>
