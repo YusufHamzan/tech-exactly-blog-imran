@@ -8,7 +8,7 @@ const REFRESH_COOKIE = 'refreshToken';
 const cookieOptions = {
   httpOnly: true,
   secure: env.nodeEnv === 'production',
-  sameSite: 'lax',
+  sameSite: env.nodeEnv === 'production' ? 'none' : 'lax',
   path: '/api/v1/auth',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, matches JWT_REFRESH_EXPIRES
 };
