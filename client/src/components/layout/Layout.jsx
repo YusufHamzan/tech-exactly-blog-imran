@@ -1,13 +1,15 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar.jsx';
 
 export function Layout() {
-  return (
-    <>
-      <Navbar />
-      <main className="container">
-        <Outlet />
-      </main>
-    </>
-  );
+    const { pathname } = useLocation();
+    const wide = pathname.startsWith('/admin');
+    return (
+        <>
+            <Navbar />
+            <main className={`container ${wide ? 'wide' : ''}`}>
+                <Outlet />
+            </main>
+        </>
+    );
 }

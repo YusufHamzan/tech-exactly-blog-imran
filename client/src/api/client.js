@@ -2,6 +2,9 @@ import axios from 'axios';
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
 
+export const cleanParams = (params = {}) =>
+    Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null));
+
 // Access token lives in memory only
 let accessToken = null;
 export const tokenStore = {

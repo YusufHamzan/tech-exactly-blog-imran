@@ -13,6 +13,11 @@ import { NotFoundPage } from './pages/NotFoundPage.jsx';
 import { PostDetailPage } from './pages/PostDetailPage.jsx';
 import { NewPostPage } from './pages/NewPostPage.jsx';
 import { EditPostPage } from './pages/EditPostPage.jsx';
+import { AdminLayout } from './pages/admin/AdminLayout.jsx';
+import { AdminUsersPage } from './pages/admin/AdminUsersPage.jsx';
+import { AdminPostsPage } from './pages/admin/AdminPostsPage.jsx';
+import { AdminCommentsPage } from './pages/admin/AdminCommentsPage.jsx';
+import { AdminActivityPage } from './pages/admin/AdminActivityPage.jsx';
 
 export default function App() {
   return (
@@ -33,7 +38,13 @@ export default function App() {
             </Route>
 
             <Route element={<AdminRoute />}>
-              <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="posts" element={<AdminPostsPage />} />
+                <Route path="comments" element={<AdminCommentsPage />} />
+                <Route path="activity" element={<AdminActivityPage />} />
+              </Route>
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />
