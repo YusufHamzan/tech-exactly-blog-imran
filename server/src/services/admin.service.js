@@ -132,6 +132,7 @@ export async function listAllComments({ page, limit, post, author }) {
       .limit(limit)
       .populate('author', AUTHOR_FIELDS)
       .populate('post', 'title slug isDeleted')
+      .populate({ path: 'post', select: 'title slug isDeleted', options: { withDeleted: true } })
       .lean(),
     Comment.countDocuments(filter),
   ]);
